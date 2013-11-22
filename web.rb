@@ -24,7 +24,7 @@ DataMapper.finalize
 DataMapper.auto_upgrade!
 
 
-put '/sensor' do
+put '/sensor/:beacon/:temperature' do
 	content_type :json
 
 	puts params
