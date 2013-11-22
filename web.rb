@@ -13,7 +13,6 @@ class Sensor
   include DataMapper::Resource
 
   property :id, Serial, :key => true
-  property :created_at, DateTime
   property :beacon, String, :length => 255
   property :temperature, Float
 end
@@ -27,11 +26,11 @@ DataMapper.auto_upgrade!
 
 put '/sensor' do
 	content_type :json
-
-	@sensor = Sensor.first_or_new(:beacon => params[:beacon])
-	@sensor.temperature = params[:temperature]
-
-	if @sensor.save
+	# @sensor = Sensor.first_or_new(:beacon => params[:beacon])
+	# @sensor.temperature = params[:temperature]
+	@sensor = Sensor.first_or_create(:beacon => params[:beacon])
+	success = @sensor.update(:beacon => params[:beacon], :name => params[:name])
+	if success
     	@sensor.to_json
  	else
     	halt 404
