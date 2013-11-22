@@ -1,6 +1,7 @@
 # Require the bundler gem and then call Bundler.require to load in all gems
 # listed in Gemfile.
 require 'bundler'
+require 'pp'
 Bundler.require
 
 # Setup DataMapper with a database URL. On Heroku, ENV['DATABASE_URL'] will be
@@ -26,11 +27,13 @@ DataMapper.auto_upgrade!
 
 put '/sensor' do
 	content_type :json
-	# @sensor = Sensor.first_or_new(:beacon => params[:beacon])
-	# @sensor.temperature = params[:temperature]
-	@sensor = Sensor.first_or_create(:beacon => params[:beacon])
-	success = @sensor.update(:beacon => params[:beacon], :name => params[:name])
-	if success
+
+	pp params
+
+	@sensor = Sensor.first_or_new(:beacon => params[:beacon])
+	@sensor.temperature = params[:temperature]
+
+	if @sensor.save
     	@sensor.to_json
  	else
     	halt 404
