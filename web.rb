@@ -17,26 +17,39 @@ class Sensor
   property :temperature, Float
 end
 
+class Device
+  include DataMapper::Resource
+
+  property :id, Serial, :key => true
+  property :device, String, :length => 255
+end
+
 # Finalize the DataMapper models.
 DataMapper.finalize
 
 # Tell DataMapper to update the database according to the definitions above.
 DataMapper.auto_upgrade!
 
-
+#creates or updates a sensor
 put '/sensor/:beacon/:temperature' do
 	content_type :json
 
 	puts params
 
-	@sensor = Sensor.first_or_new(:beacon => params[:beacon])
-	@sensor.temperature = params[:temperature]
+	@sensor = Sensor.first_or_create(:beacon => params[:beacon])
+end
 
-	if @sensor.save
-    	@sensor.to_json
- 	else
-    	halt 404
-  	end
+#creates or updates a device and responds the temperature
+put '/device/:device/:beacon' do
+	content_type :json
+
+	puts params
+
+	#create device
+	@device = Device.first_or_create(:device => params[:device])
+	@sensor = Sensor.first_or_create(:beacon => params[:beacon])
+
+	@sensor.temperature.to_json
 end
 
 get '/' do
